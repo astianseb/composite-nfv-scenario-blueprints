@@ -101,7 +101,7 @@ node_templates:
     type: cloudify.openstack.nodes.Port
     properties:
       openstack_config: *openstack_config
-    relationships:
+  relationships:
     - type: cloudify.relationships.contained_in
       target: public_network
     - type: cloudify.relationships.depends_on

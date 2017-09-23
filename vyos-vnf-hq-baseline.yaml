@@ -111,6 +111,12 @@ node_templates:
     type: cloudify.openstack.nodes.Port
     properties:
       openstack_config: *openstack_config
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          inputs:
+            args:
+              allowed_address_pairs: [{"ip_address": "0.0.0.0/0"}]
     relationships:
     - type: cloudify.relationships.contained_in
       target: public_network
@@ -123,6 +129,12 @@ node_templates:
     type: cloudify.openstack.nodes.Port
     properties:
       openstack_config: *openstack_config
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          inputs:
+            args:
+              allowed_address_pairs: [{"ip_address": "0.0.0.0/0"}]
     relationships:
     - type: cloudify.relationships.contained_in
       target: wan_network
