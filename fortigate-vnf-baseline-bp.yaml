@@ -22,6 +22,28 @@ inputs:
       An Openstack Flavor ID.
     default: { get_secret: small_image_flavor }
 
+  private_network:
+    default: { get_secret: public_network_name }
+
+  private_subnet:
+    default: { get_secret: public_subnet_name }
+
+  public_network:
+    default: public_net
+
+  public_subnet:
+    default: public_net_subnet
+
+  management_network:
+    default: { get_secret: private_network_name }
+
+  management_subnet:
+    default: { get_secret: private_subnet_name }
+
+  external_network:
+    default: { get_secret: external_network_name }
+
+
 dsl_definitions:
 
   openstack_config: &openstack_config
@@ -138,7 +160,7 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       use_external_resource: true
-      resource_id: provider_subnet
+      resource_id: { get_input: management_subnet }
     relationships:
     - target: mgmt_network
       type: cloudify.relationships.contained_in
@@ -148,14 +170,14 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       use_external_resource: true
-      resource_id: provider
+      resource_id: { get_input: management_network }
 
   public_network_subnet:
     type: cloudify.openstack.nodes.Subnet
     properties:
       openstack_config: *openstack_config
       use_external_resource: true
-      resource_id: public_net_subnet
+      resource_id: { get_input: public_subnet }
     relationships:
     - target: public_network
       type: cloudify.relationships.contained_in
@@ -165,14 +187,14 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       use_external_resource: true
-      resource_id: public_net
+      resource_id: { get_input: public_network }
 
   private_network_subnet:
     type: cloudify.openstack.nodes.Subnet
     properties:
       openstack_config: *openstack_config
       use_external_resource: true
-      resource_id: private_subnet
+      resource_id: { get_input: private_subnet }
     relationships:
     - target: private_network
       type: cloudify.relationships.contained_in
@@ -182,7 +204,7 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       use_external_resource: true
-      resource_id: private_network
+      resource_id: { get_input: private_network }
 
   security_group:
     type: cloudify.openstack.nodes.SecurityGroup
