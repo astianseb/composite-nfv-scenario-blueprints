@@ -27,6 +27,17 @@ inputs:
       An Openstack Flavor ID.
     default: { get_secret: medium_image_flavor }
 
+  public_network:
+    default: public_net
+
+  public_subnet:
+    default: public_net_subnet
+
+  management_network:
+    default: { get_secret: private_network_name }
+
+  management_subnet:
+    default: { get_secret: private_subnet_name }
 
 
 dsl_definitions:
@@ -162,7 +173,7 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       use_external_resource: true
-      resource_id: provider_subnet
+      resource_id: { get_input: management_subnet }
     relationships:
     - target: mgmt_network
       type: cloudify.relationships.contained_in
@@ -172,14 +183,14 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       use_external_resource: true
-      resource_id: provider
+      resource_id: { get_input: management_network }
 
   public_network_subnet:
     type: cloudify.openstack.nodes.Subnet
     properties:
       openstack_config: *openstack_config
       use_external_resource: false
-      resource_id: public_net_subnet
+      resource_id: { get_input: public_subnet }
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
@@ -205,7 +216,7 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       use_external_resource: false
-      resource_id: public_net
+      resource_id: { get_input: public_network }
 
   wan_network_subnet:
     type: cloudify.openstack.nodes.Subnet
